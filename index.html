@@ -376,6 +376,30 @@
                 CPA: cpa
             });
         }
+        
+        function setDateRange(type) {
+            if (!dashboardData.Diario || dashboardData.Diario.length === 0) return;
+            const firstDate = dashboardData.Diario[0].Data;
+            const lastDate = dashboardData.Diario[dashboardData.Diario.length - 1].Data;
+            
+            if (type === 'all') {
+                document.getElementById('dateStart').value = firstDate;
+                document.getElementById('dateEnd').value = lastDate;
+            } else if (type === 'month') {
+                // Pega o mês da última data disponível
+                const lastDateObj = new Date(lastDate + 'T12:00:00');
+                const year = lastDateObj.getFullYear();
+                const month = String(lastDateObj.getMonth() + 1).padStart(2, '0');
+                // O primeiro dia do mês e o último dia do mês
+                const startOfMonth = `${year}-${month}-01`;
+                const lastDay = new Date(year, lastDateObj.getMonth() + 1, 0).getDate();
+                const endOfMonth = `${year}-${month}-${lastDay}`;
+                
+                document.getElementById('dateStart').value = startOfMonth;
+                document.getElementById('dateEnd').value = endOfMonth;
+            }
+            updateDashboard();
+        }
 
         // Init Dates
         if (dashboardData.Diario && dashboardData.Diario.length > 0) {
