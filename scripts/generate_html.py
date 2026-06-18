@@ -113,7 +113,11 @@ def generate_html():
                     <p class="text-white/50 mt-1 text-xs uppercase tracking-[0.2em] font-medium">Dashboard de Performance Exclusivo</p>
                 </div>
             </div>
-            <div class="mt-6 md:mt-0 flex flex-row items-center gap-4 relative w-full md:w-auto">
+            <div class="mt-6 md:mt-0 flex flex-row flex-wrap items-center gap-4 relative w-full md:w-auto">
+                <div class="flex items-center gap-2">
+                    <button onclick="setDateRange('month')" class="text-xs text-[#D4AF37]/70 hover:text-[#D4AF37] border border-[#D4AF37]/30 px-3 py-1.5 rounded-lg transition-colors">Este Mês</button>
+                    <button onclick="setDateRange('all')" class="text-xs text-[#D4AF37]/70 hover:text-[#D4AF37] border border-[#D4AF37]/30 px-3 py-1.5 rounded-lg transition-colors">Global</button>
+                </div>
                 <div class="flex items-center gap-2">
                     <label class="text-[#D4AF37]/70 text-xs font-semibold uppercase tracking-widest">De:</label>
                     <input type="date" id="dateStart" onchange="updateDashboard()" class="glass text-[#D4AF37] text-sm md:text-base font-medium rounded-xl px-4 py-2.5 w-full outline-none focus:ring-1 focus:ring-[#D4AF37]/50 transition-all border border-[#D4AF37]/20 shadow-lg shadow-[#D4AF37]/5 [color-scheme:dark]">
@@ -353,6 +357,30 @@ def generate_html():
                 ROAS: roas,
                 CPA: cpa
             });
+        }
+        
+        function setDateRange(type) {
+            if (!dashboardData.Diario || dashboardData.Diario.length === 0) return;
+            const firstDate = dashboardData.Diario[0].Data;
+            const lastDate = dashboardData.Diario[dashboardData.Diario.length - 1].Data;
+            
+            if (type === 'all') {
+                document.getElementById('dateStart').value = firstDate;
+                document.getElementById('dateEnd').value = lastDate;
+            } else if (type === 'month') {
+                // Pega o mês da última data disponível
+                const lastDateObj = new Date(lastDate + 'T12:00:00');
+                const year = lastDateObj.getFullYear();
+                const month = String(lastDateObj.getMonth() + 1).padStart(2, '0');
+                // O primeiro dia do mês e o último dia do mês
+                const startOfMonth = `${year}-${month}-01`;
+                const lastDay = new Date(year, lastDateObj.getMonth() + 1, 0).getDate();
+                const endOfMonth = `${year}-${month}-${lastDay}`;
+                
+                document.getElementById('dateStart').value = startOfMonth;
+                document.getElementById('dateEnd').value = endOfMonth;
+            }
+            updateDashboard();
         }
 
         // Init Dates
