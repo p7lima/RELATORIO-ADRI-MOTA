@@ -124,6 +124,9 @@ def process_data():
     i_ven = [c for c in idade_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
     col_vendas_idade = i_ven[0] if i_ven else 'Resultados'
     
+    # Preencher hierarquia do Meta (ffill)
+    df_idade['Idade'] = df_idade['Idade'].ffill()
+    
     df_idade = df_idade[df_idade['Idade'].notna()]
     df_idade = df_idade[~df_idade['Idade'].astype(str).str.contains('All|Total', case=False)]
     df_idade['Dia_str'] = df_idade['Dia'].astype(str)
@@ -147,6 +150,9 @@ def process_data():
         pos_cols = df_pos.columns
         p_ven = [c for c in pos_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
         col_vendas_pos = p_ven[0] if p_ven else 'Resultados'
+        
+        # Preencher hierarquia do Meta (ffill)
+        df_pos['Dia'] = df_pos['Dia'].ffill()
         
         df_pos = df_pos[df_pos['Posicionamento'].notna()]
         df_pos = df_pos[~df_pos['Posicionamento'].astype(str).str.contains('All|Total', case=False)]

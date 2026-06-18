@@ -190,7 +190,7 @@ def generate_html():
             <div class="glass rounded-2xl p-6 relative overflow-hidden group hover:border-[#B76E79]/30 transition-colors">
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#B76E79]/10 rounded-full blur-2xl group-hover:bg-[#B76E79]/20 transition-colors duration-500"></div>
                 <h3 class="text-xl font-serif text-[#F3E5AB] mb-1">Posicionamentos</h3>
-                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Período Selecionado</p>
+                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Visão Global</p>
                 <div class="relative h-56">
                     <canvas id="placementChart"></canvas>
                 </div>
