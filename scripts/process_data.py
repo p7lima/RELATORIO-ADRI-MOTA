@@ -174,11 +174,52 @@ def process_data():
         print("Erro ao processar Posicionamentos:", e)
         pos_diario = []
         
+    # Process Criativo Daily
+    try:
+        df_criativo_diario = pd.read_excel('data/CRIATIVO-DIAADIA.xlsx')
+        criativo_diario_cols = df_criativo_diario.columns
+        
+        col_cria = [c for c in criativo_diario_cols if 'Anúncio' in str(c) or 'Anuncio' in str(c) or 'Anncio' in str(c)]
+        col_cria_name = col_cria[0] if col_cria else 'Anúncios'
+        
+        c_inv = [c for c in criativo_diario_cols if 'Valor usado' in str(c)]
+        col_c_inv = c_inv[0] if c_inv else 'Valor usado (BRL)'
+        
+        c_fat = [c for c in criativo_diario_cols if 'Valor dos resultados' in str(c)]
+        col_c_fat = c_fat[0] if c_fat else 'Valor dos resultados'
+        
+        c_ven = [c for c in criativo_diario_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
+        col_c_ven = c_ven[0] if c_ven else 'Resultados'
+        
+        df_criativo_diario = df_criativo_diario[~df_criativo_diario[col_cria_name].astype(str).str.contains('All|Total', case=False)]
+        df_criativo_diario['Dia_str'] = df_criativo_diario['Dia'].astype(str)
+        df_criativo_diario = df_criativo_diario[df_criativo_diario['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
+        
+        df_criativo_diario['Dia'] = pd.to_datetime(df_criativo_diario['Dia'])
+        df_criativo_diario[col_c_inv] = pd.to_numeric(df_criativo_diario[col_c_inv], errors='coerce').fillna(0)
+        df_criativo_diario[col_c_fat] = pd.to_numeric(df_criativo_diario[col_c_fat], errors='coerce').fillna(0)
+        df_criativo_diario[col_c_ven] = pd.to_numeric(df_criativo_diario[col_c_ven], errors='coerce').fillna(0)
+        
+        cria_agg = df_criativo_diario.groupby(['Dia', col_cria_name])[[col_c_inv, col_c_fat, col_c_ven]].sum().reset_index()
+        criativos_diario = []
+        for _, row in cria_agg.iterrows():
+            criativos_diario.append({
+                'Data': row['Dia'].strftime('%Y-%m-%d'),
+                'Nome': str(row[col_cria_name]),
+                'Investimento': float(row[col_c_inv]),
+                'Faturamento': float(row[col_c_fat]),
+                'Vendas': int(row[col_c_ven])
+            })
+    except Exception as e:
+        print("Erro ao processar Criativos Diario:", e)
+        criativos_diario = []
+        
     final_data = {
         'Global': global_metrics,
         'Diario': daily_data,
         'IdadeDiario': idade_diario,
         'PosicionamentoDiario': pos_diario,
+        'CriativoDiario': criativos_diario,
         'TopCriativos': top_criativos
     }
     

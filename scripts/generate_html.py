@@ -229,24 +229,7 @@ def generate_html():
                             <th class="pb-4 px-4 font-semibold text-right">ROAS</th>
                         </tr>
                     </thead>
-                    <tbody class="text-sm">
-"""
-    
-    for i, creative in enumerate(data['TopCriativos']):
-        highlight_bg = "bg-[#D4AF37]/5" if i == 0 else ""
-        medal = "🥇 " if i == 0 else ("🥈 " if i == 1 else ("🥉 " if i == 2 else ""))
-        html_template += f"""
-                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors {highlight_bg}">
-                            <td class="py-5 px-4 text-white/80 font-medium flex items-center gap-3">
-                                <span class="text-xl">{medal}</span> {creative['Nome']}
-                            </td>
-                            <td class="py-5 px-4 text-right text-[#D4AF37] font-semibold tracking-wide">R$ {creative['Faturamento']:,.2f}</td>
-                            <td class="py-5 px-4 text-center text-white/70">{creative['Vendas']}</td>
-                            <td class="py-5 px-4 text-right text-[#B76E79] font-semibold tracking-wide">{creative['ROAS']:.2f}x</td>
-                        </tr>
-"""
-
-    html_template += """
+                    <tbody class="text-sm" id="topCreativesBody">
                     </tbody>
                 </table>
             </div>
@@ -369,6 +352,56 @@ def generate_html():
                     if (dayDate >= startDate && dayDate <= endDate) {
                         posDataMap[dayData.Posicionamento] = (posDataMap[dayData.Posicionamento] || 0) + dayData.Vendas;
                     }
+                });
+            }
+            
+            // Criativos Update
+            let criativosDataMap = {};
+            if (dashboardData.CriativoDiario) {
+                dashboardData.CriativoDiario.forEach(dayData => {
+                    const dayDate = new Date(dayData.Data + 'T12:00:00');
+                    if (dayDate >= startDate && dayDate <= endDate) {
+                        if (!criativosDataMap[dayData.Nome]) {
+                            criativosDataMap[dayData.Nome] = {Faturamento: 0, Vendas: 0, Investimento: 0};
+                        }
+                        criativosDataMap[dayData.Nome].Faturamento += dayData.Faturamento;
+                        criativosDataMap[dayData.Nome].Vendas += dayData.Vendas;
+                        criativosDataMap[dayData.Nome].Investimento += dayData.Investimento;
+                    }
+                });
+            }
+
+            let criativosArray = Object.keys(criativosDataMap).map(nome => {
+                const c = criativosDataMap[nome];
+                c.Nome = nome;
+                c.ROAS = c.Investimento > 0 ? c.Faturamento / c.Investimento : 0;
+                return c;
+            });
+            
+            criativosArray.sort((a, b) => b.Faturamento - a.Faturamento);
+            const top5 = criativosArray.slice(0, 5);
+            
+            const tbody = document.getElementById('topCreativesBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+                top5.forEach((creative, i) => {
+                    const highlightBg = i === 0 ? "bg-[#D4AF37]/5" : "";
+                    const medal = i === 0 ? "🥇 " : (i === 1 ? "🥈 " : (i === 2 ? "🥉 " : ""));
+                    
+                    const faturamentoStr = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(creative.Faturamento);
+                    const roasStr = creative.ROAS.toFixed(2).replace('.', ',') + 'x';
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = `border-b border-white/5 hover:bg-white/5 transition-colors ${highlightBg}`;
+                    tr.innerHTML = `
+                        <td class="py-5 px-4 text-white/80 font-medium flex items-center gap-3">
+                            <span class="text-xl">${medal}</span> ${creative.Nome}
+                        </td>
+                        <td class="py-5 px-4 text-right text-[#D4AF37] font-semibold tracking-wide">${faturamentoStr}</td>
+                        <td class="py-5 px-4 text-center text-white/70">${creative.Vendas}</td>
+                        <td class="py-5 px-4 text-right text-[#B76E79] font-semibold tracking-wide">${roasStr}</td>
+                    `;
+                    tbody.appendChild(tr);
                 });
             }
             
