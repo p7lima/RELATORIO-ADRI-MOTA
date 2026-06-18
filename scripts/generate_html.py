@@ -9,8 +9,6 @@ def generate_html():
     with open('data.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
         
-    weeks = list(data['Semanal'].keys())
-    
     html_template = f"""<!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
@@ -115,11 +113,15 @@ def generate_html():
                     <p class="text-white/50 mt-1 text-xs uppercase tracking-[0.2em] font-medium">Dashboard de Performance Exclusivo</p>
                 </div>
             </div>
-            <div class="mt-6 md:mt-0 relative w-full md:w-auto">
-                <select id="weekSelector" onchange="updateDashboard()" class="glass text-[#D4AF37] text-sm md:text-base font-medium rounded-xl px-6 py-3.5 w-full cursor-pointer outline-none focus:ring-1 focus:ring-[#D4AF37]/50 transition-all border border-[#D4AF37]/20 shadow-lg shadow-[#D4AF37]/5">
-                    <option value="Global">Visão Global</option>
-                    {''.join([f'<option value="{w}">{w}</option>' for w in weeks])}
-                </select>
+            <div class="mt-6 md:mt-0 flex flex-row items-center gap-4 relative w-full md:w-auto">
+                <div class="flex items-center gap-2">
+                    <label class="text-[#D4AF37]/70 text-xs font-semibold uppercase tracking-widest">De:</label>
+                    <input type="date" id="dateStart" onchange="updateDashboard()" class="glass text-[#D4AF37] text-sm md:text-base font-medium rounded-xl px-4 py-2.5 w-full outline-none focus:ring-1 focus:ring-[#D4AF37]/50 transition-all border border-[#D4AF37]/20 shadow-lg shadow-[#D4AF37]/5 [color-scheme:dark]">
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-[#D4AF37]/70 text-xs font-semibold uppercase tracking-widest">Até:</label>
+                    <input type="date" id="dateEnd" onchange="updateDashboard()" class="glass text-[#D4AF37] text-sm md:text-base font-medium rounded-xl px-4 py-2.5 w-full outline-none focus:ring-1 focus:ring-[#D4AF37]/50 transition-all border border-[#D4AF37]/20 shadow-lg shadow-[#D4AF37]/5 [color-scheme:dark]">
+                </div>
             </div>
         </header>
 
@@ -314,12 +316,52 @@ def generate_html():
         }
 
         function updateDashboard() {
-            const selected = document.getElementById('weekSelector').value;
-            if (selected === 'Global') {
-                updateCards(dashboardData.Global);
-            } else {
-                updateCards(dashboardData.Semanal[selected]);
+            const startVal = document.getElementById('dateStart').value;
+            const endVal = document.getElementById('dateEnd').value;
+            
+            if (!startVal || !endVal) return;
+            
+            const startDate = new Date(startVal + 'T00:00:00');
+            const endDate = new Date(endVal + 'T23:59:59');
+            
+            let totalInv = 0;
+            let totalFat = 0;
+            let totalVen = 0;
+            let totalImp = 0;
+            let totalCli = 0;
+            
+            if (dashboardData.Diario) {
+                dashboardData.Diario.forEach(dayData => {
+                    const dayDate = new Date(dayData.Data + 'T12:00:00'); // Midday to avoid timezone issues
+                    if (dayDate >= startDate && dayDate <= endDate) {
+                        totalInv += dayData.Investimento;
+                        totalFat += dayData.Faturamento;
+                        totalVen += dayData.Vendas;
+                        totalImp += dayData.Impressoes;
+                        totalCli += dayData.Cliques;
+                    }
+                });
             }
+            
+            const roas = totalInv > 0 ? totalFat / totalInv : 0;
+            const cpa = totalVen > 0 ? totalInv / totalVen : 0;
+            
+            updateCards({
+                Investimento: totalInv,
+                Faturamento: totalFat,
+                Vendas: totalVen,
+                ROAS: roas,
+                CPA: cpa
+            });
+        }
+
+        // Init Dates
+        if (dashboardData.Diario && dashboardData.Diario.length > 0) {
+            const firstDate = dashboardData.Diario[0].Data;
+            const lastDate = dashboardData.Diario[dashboardData.Diario.length - 1].Data;
+            
+            document.getElementById('dateStart').value = firstDate;
+            document.getElementById('dateEnd').value = lastDate;
         }
 
         // Init charts
@@ -410,8 +452,8 @@ def generate_html():
             }
         });
 
-        // Initialize with Global Data
-        updateCards(dashboardData.Global);
+        // Initialize with Selected Data
+        updateDashboard();
     </script>
 </body>
 </html>

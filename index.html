@@ -102,11 +102,15 @@
                     <p class="text-white/50 mt-1 text-xs uppercase tracking-[0.2em] font-medium">Dashboard de Performance Exclusivo</p>
                 </div>
             </div>
-            <div class="mt-6 md:mt-0 relative w-full md:w-auto">
-                <select id="weekSelector" onchange="updateDashboard()" class="glass text-[#D4AF37] text-sm md:text-base font-medium rounded-xl px-6 py-3.5 w-full cursor-pointer outline-none focus:ring-1 focus:ring-[#D4AF37]/50 transition-all border border-[#D4AF37]/20 shadow-lg shadow-[#D4AF37]/5">
-                    <option value="Global">Visão Global</option>
-                    <option value="Semana 20 (16/05 a 17/05)">Semana 20 (16/05 a 17/05)</option><option value="Semana 21 (18/05 a 24/05)">Semana 21 (18/05 a 24/05)</option><option value="Semana 22 (25/05 a 31/05)">Semana 22 (25/05 a 31/05)</option><option value="Semana 23 (01/06 a 07/06)">Semana 23 (01/06 a 07/06)</option><option value="Semana 24 (08/06 a 14/06)">Semana 24 (08/06 a 14/06)</option><option value="Semana 25 (15/06 a 18/06)">Semana 25 (15/06 a 18/06)</option>
-                </select>
+            <div class="mt-6 md:mt-0 flex flex-row items-center gap-4 relative w-full md:w-auto">
+                <div class="flex items-center gap-2">
+                    <label class="text-[#D4AF37]/70 text-xs font-semibold uppercase tracking-widest">De:</label>
+                    <input type="date" id="dateStart" onchange="updateDashboard()" class="glass text-[#D4AF37] text-sm md:text-base font-medium rounded-xl px-4 py-2.5 w-full outline-none focus:ring-1 focus:ring-[#D4AF37]/50 transition-all border border-[#D4AF37]/20 shadow-lg shadow-[#D4AF37]/5 [color-scheme:dark]">
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-[#D4AF37]/70 text-xs font-semibold uppercase tracking-widest">Até:</label>
+                    <input type="date" id="dateEnd" onchange="updateDashboard()" class="glass text-[#D4AF37] text-sm md:text-base font-medium rounded-xl px-4 py-2.5 w-full outline-none focus:ring-1 focus:ring-[#D4AF37]/50 transition-all border border-[#D4AF37]/20 shadow-lg shadow-[#D4AF37]/5 [color-scheme:dark]">
+                </div>
             </div>
         </header>
 
@@ -316,7 +320,7 @@
 
     <!-- Data Injection -->
     <script>
-        const dashboardData = {"Global": {"Investimento": 3538.9800000000005, "Faturamento": 10437.039999999999, "Vendas": 23, "Impressoes": 49136, "Cliques": 3714, "ROAS": 2.95, "CPA": 153.87, "CPC": 0.95, "CTR": 7.56}, "Semanal": {"Semana 20 (16/05 a 17/05)": {"Investimento": 241.10999999999999, "Faturamento": 822.79, "Vendas": 1, "Impressoes": 3105, "Cliques": 206, "ROAS": 3.41, "CPA": 241.11, "CPC": 1.17, "CTR": 6.63}, "Semana 21 (18/05 a 24/05)": {"Investimento": 989.6099999999999, "Faturamento": 3834.4700000000003, "Vendas": 8, "Impressoes": 13058, "Cliques": 1272, "ROAS": 3.87, "CPA": 123.7, "CPC": 0.78, "CTR": 9.74}, "Semana 22 (25/05 a 31/05)": {"Investimento": 716.4100000000001, "Faturamento": 2977.9900000000002, "Vendas": 5, "Impressoes": 11128, "Cliques": 1132, "ROAS": 4.16, "CPA": 143.28, "CPC": 0.63, "CTR": 10.17}, "Semana 23 (01/06 a 07/06)": {"Investimento": 625.8899999999999, "Faturamento": 1564.43, "Vendas": 5, "Impressoes": 9335, "Cliques": 565, "ROAS": 2.5, "CPA": 125.18, "CPC": 1.11, "CTR": 6.05}, "Semana 24 (08/06 a 14/06)": {"Investimento": 575.83, "Faturamento": 651.58, "Vendas": 1, "Impressoes": 7732, "Cliques": 345, "ROAS": 1.13, "CPA": 575.83, "CPC": 1.67, "CTR": 4.46}, "Semana 25 (15/06 a 18/06)": {"Investimento": 390.13, "Faturamento": 585.78, "Vendas": 3, "Impressoes": 4778, "Cliques": 194, "ROAS": 1.5, "CPA": 130.04, "CPC": 2.01, "CTR": 4.06}}, "TopCriativos": [{"Nome": "1 - Pequenos detalhes. Grande impacto. - 15/05", "Faturamento": 8774.3, "Vendas": 19, "ROAS": 3.87}, {"Nome": "4 - \u201cNada \u00f3bvio\u201d. Tudo intencional\u201d.", "Faturamento": 1430.51, "Vendas": 3, "ROAS": 1.82}, {"Nome": "5 - Nuda nasce da ideia de retirar excessos.", "Faturamento": 232.23, "Vendas": 1, "ROAS": 2.42}, {"Nome": "2 - atemporal, moderna e cl\u00e1ssica. - 15/05", "Faturamento": 0.0, "Vendas": 0, "ROAS": 0.0}, {"Nome": "4 - Minimalismo n\u00e3o \u00e9 aus\u00eancia", "Faturamento": 0.0, "Vendas": 0, "ROAS": 0.0}]};
+        const dashboardData = {"Global": {"Investimento": 3538.9800000000005, "Faturamento": 10437.039999999999, "Vendas": 23, "Impressoes": 49136, "Cliques": 3714, "ROAS": 2.95, "CPA": 153.87, "CPC": 0.95, "CTR": 7.56}, "Diario": [{"Data": "2026-05-16", "Investimento": 95.85, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1642, "Cliques": 68}, {"Data": "2026-05-17", "Investimento": 145.26, "Faturamento": 822.79, "Vendas": 1, "Impressoes": 1463, "Cliques": 138}, {"Data": "2026-05-18", "Investimento": 130.94, "Faturamento": 490.22, "Vendas": 2, "Impressoes": 1313, "Cliques": 170}, {"Data": "2026-05-19", "Investimento": 159.59, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1619, "Cliques": 157}, {"Data": "2026-05-20", "Investimento": 155.52, "Faturamento": 1541.89, "Vendas": 2, "Impressoes": 2176, "Cliques": 196}, {"Data": "2026-05-21", "Investimento": 124.24, "Faturamento": 356.07, "Vendas": 2, "Impressoes": 2174, "Cliques": 192}, {"Data": "2026-05-22", "Investimento": 153.18, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1907, "Cliques": 189}, {"Data": "2026-05-23", "Investimento": 147.17, "Faturamento": 1214.71, "Vendas": 1, "Impressoes": 2104, "Cliques": 159}, {"Data": "2026-05-24", "Investimento": 118.97, "Faturamento": 231.58, "Vendas": 1, "Impressoes": 1765, "Cliques": 209}, {"Data": "2026-05-25", "Investimento": 70.1, "Faturamento": 1524.66, "Vendas": 1, "Impressoes": 994, "Cliques": 123}, {"Data": "2026-05-26", "Investimento": 128.09, "Faturamento": 328.47, "Vendas": 1, "Impressoes": 2512, "Cliques": 249}, {"Data": "2026-05-27", "Investimento": 110.85, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1789, "Cliques": 169}, {"Data": "2026-05-28", "Investimento": 110.16, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1590, "Cliques": 166}, {"Data": "2026-05-29", "Investimento": 80.58, "Faturamento": 367.91, "Vendas": 1, "Impressoes": 1009, "Cliques": 103}, {"Data": "2026-05-30", "Investimento": 120.16, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1708, "Cliques": 145}, {"Data": "2026-05-31", "Investimento": 96.47, "Faturamento": 756.95, "Vendas": 2, "Impressoes": 1526, "Cliques": 177}, {"Data": "2026-06-01", "Investimento": 112.03, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1489, "Cliques": 101}, {"Data": "2026-06-02", "Investimento": 70.44, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1108, "Cliques": 77}, {"Data": "2026-06-03", "Investimento": 86.41, "Faturamento": 176.45, "Vendas": 1, "Impressoes": 1564, "Cliques": 68}, {"Data": "2026-06-04", "Investimento": 85.84, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1116, "Cliques": 62}, {"Data": "2026-06-05", "Investimento": 67.9, "Faturamento": 1079.51, "Vendas": 3, "Impressoes": 765, "Cliques": 77}, {"Data": "2026-06-06", "Investimento": 102.61, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1649, "Cliques": 68}, {"Data": "2026-06-07", "Investimento": 100.66, "Faturamento": 308.47, "Vendas": 1, "Impressoes": 1644, "Cliques": 112}, {"Data": "2026-06-08", "Investimento": 88.53, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1415, "Cliques": 135}, {"Data": "2026-06-09", "Investimento": 59.96, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 781, "Cliques": 32}, {"Data": "2026-06-10", "Investimento": 57.53, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 690, "Cliques": 33}, {"Data": "2026-06-11", "Investimento": 87.36, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 845, "Cliques": 35}, {"Data": "2026-06-12", "Investimento": 50.23, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 753, "Cliques": 26}, {"Data": "2026-06-13", "Investimento": 90.46000000000001, "Faturamento": 651.58, "Vendas": 1, "Impressoes": 1428, "Cliques": 34}, {"Data": "2026-06-14", "Investimento": 141.76, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1820, "Cliques": 50}, {"Data": "2026-06-15", "Investimento": 120.51, "Faturamento": 176.0, "Vendas": 1, "Impressoes": 1433, "Cliques": 32}, {"Data": "2026-06-16", "Investimento": 121.17, "Faturamento": 177.55, "Vendas": 1, "Impressoes": 1826, "Cliques": 82}, {"Data": "2026-06-17", "Investimento": 111.29, "Faturamento": 232.23, "Vendas": 1, "Impressoes": 1238, "Cliques": 65}, {"Data": "2026-06-18", "Investimento": 37.16, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 281, "Cliques": 15}], "TopCriativos": [{"Nome": "1 - Pequenos detalhes. Grande impacto. - 15/05", "Faturamento": 8774.3, "Vendas": 19, "ROAS": 3.87}, {"Nome": "4 - \u201cNada \u00f3bvio\u201d. Tudo intencional\u201d.", "Faturamento": 1430.51, "Vendas": 3, "ROAS": 1.82}, {"Nome": "5 - Nuda nasce da ideia de retirar excessos.", "Faturamento": 232.23, "Vendas": 1, "ROAS": 2.42}, {"Nome": "2 - atemporal, moderna e cl\u00e1ssica. - 15/05", "Faturamento": 0.0, "Vendas": 0, "ROAS": 0.0}, {"Nome": "4 - Minimalismo n\u00e3o \u00e9 aus\u00eancia", "Faturamento": 0.0, "Vendas": 0, "ROAS": 0.0}]};
         
         const formatCurrency = (val) => val.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
         const formatNumber = (val) => val.toLocaleString('pt-BR');
@@ -330,12 +334,52 @@
         }
 
         function updateDashboard() {
-            const selected = document.getElementById('weekSelector').value;
-            if (selected === 'Global') {
-                updateCards(dashboardData.Global);
-            } else {
-                updateCards(dashboardData.Semanal[selected]);
+            const startVal = document.getElementById('dateStart').value;
+            const endVal = document.getElementById('dateEnd').value;
+            
+            if (!startVal || !endVal) return;
+            
+            const startDate = new Date(startVal + 'T00:00:00');
+            const endDate = new Date(endVal + 'T23:59:59');
+            
+            let totalInv = 0;
+            let totalFat = 0;
+            let totalVen = 0;
+            let totalImp = 0;
+            let totalCli = 0;
+            
+            if (dashboardData.Diario) {
+                dashboardData.Diario.forEach(dayData => {
+                    const dayDate = new Date(dayData.Data + 'T12:00:00'); // Midday to avoid timezone issues
+                    if (dayDate >= startDate && dayDate <= endDate) {
+                        totalInv += dayData.Investimento;
+                        totalFat += dayData.Faturamento;
+                        totalVen += dayData.Vendas;
+                        totalImp += dayData.Impressoes;
+                        totalCli += dayData.Cliques;
+                    }
+                });
             }
+            
+            const roas = totalInv > 0 ? totalFat / totalInv : 0;
+            const cpa = totalVen > 0 ? totalInv / totalVen : 0;
+            
+            updateCards({
+                Investimento: totalInv,
+                Faturamento: totalFat,
+                Vendas: totalVen,
+                ROAS: roas,
+                CPA: cpa
+            });
+        }
+
+        // Init Dates
+        if (dashboardData.Diario && dashboardData.Diario.length > 0) {
+            const firstDate = dashboardData.Diario[0].Data;
+            const lastDate = dashboardData.Diario[dashboardData.Diario.length - 1].Data;
+            
+            document.getElementById('dateStart').value = firstDate;
+            document.getElementById('dateEnd').value = lastDate;
         }
 
         // Init charts
@@ -426,8 +470,8 @@
             }
         });
 
-        // Initialize with Global Data
-        updateCards(dashboardData.Global);
+        // Initialize with Selected Data
+        updateDashboard();
     </script>
 </body>
 </html>

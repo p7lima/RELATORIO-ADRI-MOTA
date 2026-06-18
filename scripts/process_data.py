@@ -48,38 +48,25 @@ def process_data():
     else:
         global_metrics['CTR'] = 0
         
-    # Group by week
-    df_dia_dates['Semana'] = df_dia_dates['Dia'].dt.isocalendar().week
-    weekly_data = {}
-    for week, group in df_dia_dates.groupby('Semana'):
+    # Group by Day
+    daily_data = []
+    for date_val, group in df_dia_dates.groupby(df_dia_dates['Dia'].dt.date):
         inv = float(group[col_investimento].sum())
         fat = float(group[col_faturamento].sum())
         ven = int(group[col_vendas].sum())
         imp = int(group[col_impressoes].sum())
         cli = int(group[col_cliques].sum())
         
-        roas = round(fat / inv, 2) if inv > 0 else 0
-        cpa = round(inv / ven, 2) if ven > 0 else 0
-        cpc = round(inv / cli, 2) if cli > 0 else 0
-        ctr = round((cli / imp) * 100, 2) if imp > 0 else 0
-        
-        min_date = group['Dia'].min().strftime('%d/%m')
-        max_date = group['Dia'].max().strftime('%d/%m')
-        week_label = f"Semana {week} ({min_date} a {max_date})"
-        
-        weekly_data[week_label] = {
+        # Calculate daily proportions (if needed by frontend, though frontend will usually recalculate for sum)
+        daily_data.append({
+            'Data': date_val.strftime('%Y-%m-%d'),
             'Investimento': inv,
             'Faturamento': fat,
             'Vendas': ven,
             'Impressoes': imp,
-            'Cliques': cli,
-            'ROAS': roas,
-            'CPA': cpa,
-            'CPC': cpc,
-            'CTR': ctr
-        }
+            'Cliques': cli
+        })
         
-    # Process Creatives
     df_cri = pd.read_excel('data/CRIATIVO.xlsx')
     c_cols = df_cri.columns
     c_nome = [c for c in c_cols if 'ncios' in str(c) and 'conjunto' not in str(c)]
@@ -123,7 +110,7 @@ def process_data():
         
     final_data = {
         'Global': global_metrics,
-        'Semanal': weekly_data,
+        'Diario': daily_data,
         'TopCriativos': top_criativos
     }
     
