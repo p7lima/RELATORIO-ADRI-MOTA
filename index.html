@@ -408,13 +408,33 @@
             }
             
             if (placementChartInst) {
-                const labels = Object.keys(posDataMap);
-                const data = Object.values(posDataMap);
-                placementChartInst.data.labels = labels;
-                placementChartInst.data.datasets[0].data = data;
+                // Filtra para remover posicionamentos com 0 vendas
+                const filteredPosMap = Object.entries(posDataMap)
+                    .filter(([pos, val]) => val > 0)
+                    .sort((a, b) => b[1] - a[1]); // Ordena do maior pro menor
+                
+                // Se ainda tiver muitos, pega os Top 5 e soma o resto em "Outros"
+                let finalLabels = [];
+                let finalData = [];
+                
+                if (filteredPosMap.length > 5) {
+                    finalLabels = filteredPosMap.slice(0, 5).map(e => e[0]);
+                    finalData = filteredPosMap.slice(0, 5).map(e => e[1]);
+                    const othersSum = filteredPosMap.slice(5).reduce((acc, curr) => acc + curr[1], 0);
+                    if (othersSum > 0) {
+                        finalLabels.push('Outros');
+                        finalData.push(othersSum);
+                    }
+                } else {
+                    finalLabels = filteredPosMap.map(e => e[0]);
+                    finalData = filteredPosMap.map(e => e[1]);
+                }
+                
+                placementChartInst.data.labels = finalLabels;
+                placementChartInst.data.datasets[0].data = finalData;
                 
                 const pieColors = ['#D4AF37', '#B76E79', '#F3E5AB', '#ffffff', '#8a7322', '#6b4047'];
-                placementChartInst.data.datasets[0].backgroundColor = labels.map((_, i) => pieColors[i % pieColors.length]);
+                placementChartInst.data.datasets[0].backgroundColor = finalLabels.map((_, i) => pieColors[i % pieColors.length]);
                 placementChartInst.update();
             }
             
