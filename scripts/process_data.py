@@ -1,0 +1,136 @@
+import pandas as pd
+import json
+import numpy as np
+
+def process_data():
+    # Read Dia a Dia
+    df_dia = pd.read_excel('data/DADOS-DIA-A-DIA.xlsx', skiprows=2)
+    
+    # Filter rows with actual dates
+    df_dia['Dia_str'] = df_dia['Dia'].astype(str)
+    df_dia_dates = df_dia[df_dia['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
+    df_dia_dates['Dia'] = pd.to_datetime(df_dia_dates['Dia'])
+    
+    # Identify relevant columns
+    cols = df_dia_dates.columns
+    col_investimento = [c for c in cols if 'Valor usado' in str(c)][0]
+    col_faturamento = [c for c in cols if 'Valor dos resultados' in str(c)][0]
+    
+    # Find exact 'Resultados' column for Sales
+    vendas_cols = [c for c in cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
+    col_vendas = vendas_cols[0] if vendas_cols else 'Resultados'
+    
+    col_impressoes = [c for c in cols if 'Impress' in str(c)][0]
+    col_cliques = [c for c in cols if 'Cliques' in str(c)][0]
+    
+    for c in [col_investimento, col_faturamento, col_vendas, col_impressoes, col_cliques]:
+        df_dia_dates[c] = pd.to_numeric(df_dia_dates[c], errors='coerce').fillna(0)
+        
+    global_metrics = {
+        'Investimento': float(df_dia_dates[col_investimento].sum()),
+        'Faturamento': float(df_dia_dates[col_faturamento].sum()),
+        'Vendas': int(df_dia_dates[col_vendas].sum()),
+        'Impressoes': int(df_dia_dates[col_impressoes].sum()),
+        'Cliques': int(df_dia_dates[col_cliques].sum()),
+    }
+    
+    if global_metrics['Investimento'] > 0:
+        global_metrics['ROAS'] = round(global_metrics['Faturamento'] / global_metrics['Investimento'], 2)
+        global_metrics['CPA'] = round(global_metrics['Investimento'] / global_metrics['Vendas'], 2) if global_metrics['Vendas'] > 0 else 0
+        global_metrics['CPC'] = round(global_metrics['Investimento'] / global_metrics['Cliques'], 2) if global_metrics['Cliques'] > 0 else 0
+    else:
+        global_metrics['ROAS'] = 0
+        global_metrics['CPA'] = 0
+        global_metrics['CPC'] = 0
+
+    if global_metrics['Impressoes'] > 0:
+        global_metrics['CTR'] = round((global_metrics['Cliques'] / global_metrics['Impressoes']) * 100, 2)
+    else:
+        global_metrics['CTR'] = 0
+        
+    # Group by week
+    df_dia_dates['Semana'] = df_dia_dates['Dia'].dt.isocalendar().week
+    weekly_data = {}
+    for week, group in df_dia_dates.groupby('Semana'):
+        inv = float(group[col_investimento].sum())
+        fat = float(group[col_faturamento].sum())
+        ven = int(group[col_vendas].sum())
+        imp = int(group[col_impressoes].sum())
+        cli = int(group[col_cliques].sum())
+        
+        roas = round(fat / inv, 2) if inv > 0 else 0
+        cpa = round(inv / ven, 2) if ven > 0 else 0
+        cpc = round(inv / cli, 2) if cli > 0 else 0
+        ctr = round((cli / imp) * 100, 2) if imp > 0 else 0
+        
+        min_date = group['Dia'].min().strftime('%d/%m')
+        max_date = group['Dia'].max().strftime('%d/%m')
+        week_label = f"Semana {week} ({min_date} a {max_date})"
+        
+        weekly_data[week_label] = {
+            'Investimento': inv,
+            'Faturamento': fat,
+            'Vendas': ven,
+            'Impressoes': imp,
+            'Cliques': cli,
+            'ROAS': roas,
+            'CPA': cpa,
+            'CPC': cpc,
+            'CTR': ctr
+        }
+        
+    # Process Creatives
+    df_cri = pd.read_excel('data/CRIATIVO.xlsx')
+    c_cols = df_cri.columns
+    c_nome = [c for c in c_cols if 'ncios' in str(c) and 'conjunto' not in str(c)]
+    if not c_nome:
+        # Fallback if specific chars are parsed differently
+        c_nome = [c for c in c_cols if 'ncios' in str(c)]
+    c_nome = c_nome[0] if c_nome else c_cols[1] # fallback to second col usually
+        
+    c_fat = [c for c in c_cols if 'Valor dos resultados' in str(c)][0]
+    
+    vendas_cols_cri = [c for c in c_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
+    c_ven = vendas_cols_cri[0] if vendas_cols_cri else 'Resultados'
+    
+    c_inv = [c for c in c_cols if 'Valor usado' in str(c)][0]
+    
+    for c in [c_fat, c_ven, c_inv]:
+         df_cri[c] = pd.to_numeric(df_cri[c], errors='coerce').fillna(0)
+         
+    # Filter valid creatives and group by name
+    df_cri = df_cri[df_cri[c_nome].notna()]
+    df_cri = df_cri[~df_cri[c_nome].astype(str).str.contains('All|Total', case=False)]
+    
+    cri_agg = df_cri.groupby(c_nome).agg({
+        c_fat: 'sum',
+        c_ven: 'sum',
+        c_inv: 'sum'
+    }).reset_index()
+    
+    cri_agg['ROAS'] = np.where(cri_agg[c_inv] > 0, cri_agg[c_fat] / cri_agg[c_inv], 0)
+    
+    top_5 = cri_agg.sort_values(by=c_fat, ascending=False).head(5)
+    
+    top_criativos = []
+    for _, row in top_5.iterrows():
+        top_criativos.append({
+            'Nome': str(row[c_nome]),
+            'Faturamento': float(row[c_fat]),
+            'Vendas': int(row[c_ven]),
+            'ROAS': round(float(row['ROAS']), 2)
+        })
+        
+    final_data = {
+        'Global': global_metrics,
+        'Semanal': weekly_data,
+        'TopCriativos': top_criativos
+    }
+    
+    with open('data.json', 'w', encoding='utf-8') as f:
+        json.dump(final_data, f, ensure_ascii=False, indent=4)
+        
+    print("Dados processados com sucesso. JSON gerado!")
+
+if __name__ == '__main__':
+    process_data()
