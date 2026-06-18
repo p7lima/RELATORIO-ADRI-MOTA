@@ -165,12 +165,12 @@
         </div>
 
         <!-- Charts Row -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 fade-in delay-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 fade-in delay-2">
             <!-- Age Chart -->
             <div class="glass rounded-2xl p-6 relative overflow-hidden group hover:border-[#D4AF37]/30 transition-colors">
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl group-hover:bg-[#D4AF37]/20 transition-colors duration-500"></div>
                 <h3 class="text-xl font-serif text-[#F3E5AB] mb-1">Vendas por Idade</h3>
-                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Visão Global</p>
+                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Período Selecionado</p>
                 <div class="relative h-56">
                     <canvas id="ageChart"></canvas>
                 </div>
@@ -179,19 +179,9 @@
             <div class="glass rounded-2xl p-6 relative overflow-hidden group hover:border-[#B76E79]/30 transition-colors">
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#B76E79]/10 rounded-full blur-2xl group-hover:bg-[#B76E79]/20 transition-colors duration-500"></div>
                 <h3 class="text-xl font-serif text-[#F3E5AB] mb-1">Posicionamentos</h3>
-                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Visão Global</p>
+                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Período Selecionado</p>
                 <div class="relative h-56">
                     <canvas id="placementChart"></canvas>
-                </div>
-            </div>
-            <!-- Top Regions -->
-            <div class="glass rounded-2xl p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group hover:border-[#D4AF37]/30 transition-colors">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#D4AF37]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <h3 class="text-xl font-serif text-[#F3E5AB] mb-1 w-full text-left">Regiões Campeãs</h3>
-                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4 w-full text-left">Visão Global</p>
-                <div class="flex-1 flex flex-col justify-center w-full z-10">
-                    <p class="text-5xl md:text-6xl font-serif text-gradient-gold mb-4 group-hover:scale-[1.03] transition-transform duration-500">SP <span class="text-white/20 font-light text-4xl">|</span> RJ <span class="text-white/20 font-light text-4xl">|</span> MG</p>
-                    <p class="text-white/50 text-sm font-light">Estados com maior concentração de demanda do público alvo.</p>
                 </div>
             </div>
         </div>
@@ -324,7 +314,7 @@
 
     <!-- Data Injection -->
     <script>
-        const dashboardData = {"Global": {"Investimento": 3538.9800000000005, "Faturamento": 10437.039999999999, "Vendas": 23, "Impressoes": 49136, "Cliques": 3714, "ROAS": 2.95, "CPA": 153.87, "CPC": 0.95, "CTR": 7.56}, "Diario": [{"Data": "2026-05-16", "Investimento": 95.85, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1642, "Cliques": 68, "ROAS": 0.0, "CPA": 0, "CPC": 1.41, "CTR": 4.14}, {"Data": "2026-05-17", "Investimento": 145.26, "Faturamento": 822.79, "Vendas": 1, "Impressoes": 1463, "Cliques": 138, "ROAS": 5.66, "CPA": 145.26, "CPC": 1.05, "CTR": 9.43}, {"Data": "2026-05-18", "Investimento": 130.94, "Faturamento": 490.22, "Vendas": 2, "Impressoes": 1313, "Cliques": 170, "ROAS": 3.74, "CPA": 65.47, "CPC": 0.77, "CTR": 12.95}, {"Data": "2026-05-19", "Investimento": 159.59, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1619, "Cliques": 157, "ROAS": 0.0, "CPA": 0, "CPC": 1.02, "CTR": 9.7}, {"Data": "2026-05-20", "Investimento": 155.52, "Faturamento": 1541.89, "Vendas": 2, "Impressoes": 2176, "Cliques": 196, "ROAS": 9.91, "CPA": 77.76, "CPC": 0.79, "CTR": 9.01}, {"Data": "2026-05-21", "Investimento": 124.24, "Faturamento": 356.07, "Vendas": 2, "Impressoes": 2174, "Cliques": 192, "ROAS": 2.87, "CPA": 62.12, "CPC": 0.65, "CTR": 8.83}, {"Data": "2026-05-22", "Investimento": 153.18, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1907, "Cliques": 189, "ROAS": 0.0, "CPA": 0, "CPC": 0.81, "CTR": 9.91}, {"Data": "2026-05-23", "Investimento": 147.17, "Faturamento": 1214.71, "Vendas": 1, "Impressoes": 2104, "Cliques": 159, "ROAS": 8.25, "CPA": 147.17, "CPC": 0.93, "CTR": 7.56}, {"Data": "2026-05-24", "Investimento": 118.97, "Faturamento": 231.58, "Vendas": 1, "Impressoes": 1765, "Cliques": 209, "ROAS": 1.95, "CPA": 118.97, "CPC": 0.57, "CTR": 11.84}, {"Data": "2026-05-25", "Investimento": 70.1, "Faturamento": 1524.66, "Vendas": 1, "Impressoes": 994, "Cliques": 123, "ROAS": 21.75, "CPA": 70.1, "CPC": 0.57, "CTR": 12.37}, {"Data": "2026-05-26", "Investimento": 128.09, "Faturamento": 328.47, "Vendas": 1, "Impressoes": 2512, "Cliques": 249, "ROAS": 2.56, "CPA": 128.09, "CPC": 0.51, "CTR": 9.91}, {"Data": "2026-05-27", "Investimento": 110.85, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1789, "Cliques": 169, "ROAS": 0.0, "CPA": 0, "CPC": 0.66, "CTR": 9.45}, {"Data": "2026-05-28", "Investimento": 110.16, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1590, "Cliques": 166, "ROAS": 0.0, "CPA": 0, "CPC": 0.66, "CTR": 10.44}, {"Data": "2026-05-29", "Investimento": 80.58, "Faturamento": 367.91, "Vendas": 1, "Impressoes": 1009, "Cliques": 103, "ROAS": 4.57, "CPA": 80.58, "CPC": 0.78, "CTR": 10.21}, {"Data": "2026-05-30", "Investimento": 120.16, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1708, "Cliques": 145, "ROAS": 0.0, "CPA": 0, "CPC": 0.83, "CTR": 8.49}, {"Data": "2026-05-31", "Investimento": 96.47, "Faturamento": 756.95, "Vendas": 2, "Impressoes": 1526, "Cliques": 177, "ROAS": 7.85, "CPA": 48.23, "CPC": 0.55, "CTR": 11.6}, {"Data": "2026-06-01", "Investimento": 112.03, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1489, "Cliques": 101, "ROAS": 0.0, "CPA": 0, "CPC": 1.11, "CTR": 6.78}, {"Data": "2026-06-02", "Investimento": 70.44, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1108, "Cliques": 77, "ROAS": 0.0, "CPA": 0, "CPC": 0.91, "CTR": 6.95}, {"Data": "2026-06-03", "Investimento": 86.41, "Faturamento": 176.45, "Vendas": 1, "Impressoes": 1564, "Cliques": 68, "ROAS": 2.04, "CPA": 86.41, "CPC": 1.27, "CTR": 4.35}, {"Data": "2026-06-04", "Investimento": 85.84, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1116, "Cliques": 62, "ROAS": 0.0, "CPA": 0, "CPC": 1.38, "CTR": 5.56}, {"Data": "2026-06-05", "Investimento": 67.9, "Faturamento": 1079.51, "Vendas": 3, "Impressoes": 765, "Cliques": 77, "ROAS": 15.9, "CPA": 22.63, "CPC": 0.88, "CTR": 10.07}, {"Data": "2026-06-06", "Investimento": 102.61, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1649, "Cliques": 68, "ROAS": 0.0, "CPA": 0, "CPC": 1.51, "CTR": 4.12}, {"Data": "2026-06-07", "Investimento": 100.66, "Faturamento": 308.47, "Vendas": 1, "Impressoes": 1644, "Cliques": 112, "ROAS": 3.06, "CPA": 100.66, "CPC": 0.9, "CTR": 6.81}, {"Data": "2026-06-08", "Investimento": 88.53, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1415, "Cliques": 135, "ROAS": 0.0, "CPA": 0, "CPC": 0.66, "CTR": 9.54}, {"Data": "2026-06-09", "Investimento": 59.96, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 781, "Cliques": 32, "ROAS": 0.0, "CPA": 0, "CPC": 1.87, "CTR": 4.1}, {"Data": "2026-06-10", "Investimento": 57.53, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 690, "Cliques": 33, "ROAS": 0.0, "CPA": 0, "CPC": 1.74, "CTR": 4.78}, {"Data": "2026-06-11", "Investimento": 87.36, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 845, "Cliques": 35, "ROAS": 0.0, "CPA": 0, "CPC": 2.5, "CTR": 4.14}, {"Data": "2026-06-12", "Investimento": 50.23, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 753, "Cliques": 26, "ROAS": 0.0, "CPA": 0, "CPC": 1.93, "CTR": 3.45}, {"Data": "2026-06-13", "Investimento": 90.46000000000001, "Faturamento": 651.58, "Vendas": 1, "Impressoes": 1428, "Cliques": 34, "ROAS": 7.2, "CPA": 90.46, "CPC": 2.66, "CTR": 2.38}, {"Data": "2026-06-14", "Investimento": 141.76, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1820, "Cliques": 50, "ROAS": 0.0, "CPA": 0, "CPC": 2.84, "CTR": 2.75}, {"Data": "2026-06-15", "Investimento": 120.51, "Faturamento": 176.0, "Vendas": 1, "Impressoes": 1433, "Cliques": 32, "ROAS": 1.46, "CPA": 120.51, "CPC": 3.77, "CTR": 2.23}, {"Data": "2026-06-16", "Investimento": 121.17, "Faturamento": 177.55, "Vendas": 1, "Impressoes": 1826, "Cliques": 82, "ROAS": 1.47, "CPA": 121.17, "CPC": 1.48, "CTR": 4.49}, {"Data": "2026-06-17", "Investimento": 111.29, "Faturamento": 232.23, "Vendas": 1, "Impressoes": 1238, "Cliques": 65, "ROAS": 2.09, "CPA": 111.29, "CPC": 1.71, "CTR": 5.25}, {"Data": "2026-06-18", "Investimento": 37.16, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 281, "Cliques": 15, "ROAS": 0.0, "CPA": 0, "CPC": 2.48, "CTR": 5.34}], "TopCriativos": [{"Nome": "1 - Pequenos detalhes. Grande impacto. - 15/05", "Faturamento": 8774.3, "Vendas": 19, "ROAS": 3.87}, {"Nome": "4 - \u201cNada \u00f3bvio\u201d. Tudo intencional\u201d.", "Faturamento": 1430.51, "Vendas": 3, "ROAS": 1.82}, {"Nome": "5 - Nuda nasce da ideia de retirar excessos.", "Faturamento": 232.23, "Vendas": 1, "ROAS": 2.42}, {"Nome": "2 - atemporal, moderna e cl\u00e1ssica. - 15/05", "Faturamento": 0.0, "Vendas": 0, "ROAS": 0.0}, {"Nome": "4 - Minimalismo n\u00e3o \u00e9 aus\u00eancia", "Faturamento": 0.0, "Vendas": 0, "ROAS": 0.0}]};
+        const dashboardData = {"Global": {"Investimento": 3538.9800000000005, "Faturamento": 10437.039999999999, "Vendas": 23, "Impressoes": 49136, "Cliques": 3714, "ROAS": 2.95, "CPA": 153.87, "CPC": 0.95, "CTR": 7.56}, "Diario": [{"Data": "2026-05-16", "Investimento": 95.85, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1642, "Cliques": 68, "ROAS": 0.0, "CPA": 0, "CPC": 1.41, "CTR": 4.14}, {"Data": "2026-05-17", "Investimento": 145.26, "Faturamento": 822.79, "Vendas": 1, "Impressoes": 1463, "Cliques": 138, "ROAS": 5.66, "CPA": 145.26, "CPC": 1.05, "CTR": 9.43}, {"Data": "2026-05-18", "Investimento": 130.94, "Faturamento": 490.22, "Vendas": 2, "Impressoes": 1313, "Cliques": 170, "ROAS": 3.74, "CPA": 65.47, "CPC": 0.77, "CTR": 12.95}, {"Data": "2026-05-19", "Investimento": 159.59, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1619, "Cliques": 157, "ROAS": 0.0, "CPA": 0, "CPC": 1.02, "CTR": 9.7}, {"Data": "2026-05-20", "Investimento": 155.52, "Faturamento": 1541.89, "Vendas": 2, "Impressoes": 2176, "Cliques": 196, "ROAS": 9.91, "CPA": 77.76, "CPC": 0.79, "CTR": 9.01}, {"Data": "2026-05-21", "Investimento": 124.24, "Faturamento": 356.07, "Vendas": 2, "Impressoes": 2174, "Cliques": 192, "ROAS": 2.87, "CPA": 62.12, "CPC": 0.65, "CTR": 8.83}, {"Data": "2026-05-22", "Investimento": 153.18, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1907, "Cliques": 189, "ROAS": 0.0, "CPA": 0, "CPC": 0.81, "CTR": 9.91}, {"Data": "2026-05-23", "Investimento": 147.17, "Faturamento": 1214.71, "Vendas": 1, "Impressoes": 2104, "Cliques": 159, "ROAS": 8.25, "CPA": 147.17, "CPC": 0.93, "CTR": 7.56}, {"Data": "2026-05-24", "Investimento": 118.97, "Faturamento": 231.58, "Vendas": 1, "Impressoes": 1765, "Cliques": 209, "ROAS": 1.95, "CPA": 118.97, "CPC": 0.57, "CTR": 11.84}, {"Data": "2026-05-25", "Investimento": 70.1, "Faturamento": 1524.66, "Vendas": 1, "Impressoes": 994, "Cliques": 123, "ROAS": 21.75, "CPA": 70.1, "CPC": 0.57, "CTR": 12.37}, {"Data": "2026-05-26", "Investimento": 128.09, "Faturamento": 328.47, "Vendas": 1, "Impressoes": 2512, "Cliques": 249, "ROAS": 2.56, "CPA": 128.09, "CPC": 0.51, "CTR": 9.91}, {"Data": "2026-05-27", "Investimento": 110.85, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1789, "Cliques": 169, "ROAS": 0.0, "CPA": 0, "CPC": 0.66, "CTR": 9.45}, {"Data": "2026-05-28", "Investimento": 110.16, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1590, "Cliques": 166, "ROAS": 0.0, "CPA": 0, "CPC": 0.66, "CTR": 10.44}, {"Data": "2026-05-29", "Investimento": 80.58, "Faturamento": 367.91, "Vendas": 1, "Impressoes": 1009, "Cliques": 103, "ROAS": 4.57, "CPA": 80.58, "CPC": 0.78, "CTR": 10.21}, {"Data": "2026-05-30", "Investimento": 120.16, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1708, "Cliques": 145, "ROAS": 0.0, "CPA": 0, "CPC": 0.83, "CTR": 8.49}, {"Data": "2026-05-31", "Investimento": 96.47, "Faturamento": 756.95, "Vendas": 2, "Impressoes": 1526, "Cliques": 177, "ROAS": 7.85, "CPA": 48.23, "CPC": 0.55, "CTR": 11.6}, {"Data": "2026-06-01", "Investimento": 112.03, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1489, "Cliques": 101, "ROAS": 0.0, "CPA": 0, "CPC": 1.11, "CTR": 6.78}, {"Data": "2026-06-02", "Investimento": 70.44, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1108, "Cliques": 77, "ROAS": 0.0, "CPA": 0, "CPC": 0.91, "CTR": 6.95}, {"Data": "2026-06-03", "Investimento": 86.41, "Faturamento": 176.45, "Vendas": 1, "Impressoes": 1564, "Cliques": 68, "ROAS": 2.04, "CPA": 86.41, "CPC": 1.27, "CTR": 4.35}, {"Data": "2026-06-04", "Investimento": 85.84, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1116, "Cliques": 62, "ROAS": 0.0, "CPA": 0, "CPC": 1.38, "CTR": 5.56}, {"Data": "2026-06-05", "Investimento": 67.9, "Faturamento": 1079.51, "Vendas": 3, "Impressoes": 765, "Cliques": 77, "ROAS": 15.9, "CPA": 22.63, "CPC": 0.88, "CTR": 10.07}, {"Data": "2026-06-06", "Investimento": 102.61, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1649, "Cliques": 68, "ROAS": 0.0, "CPA": 0, "CPC": 1.51, "CTR": 4.12}, {"Data": "2026-06-07", "Investimento": 100.66, "Faturamento": 308.47, "Vendas": 1, "Impressoes": 1644, "Cliques": 112, "ROAS": 3.06, "CPA": 100.66, "CPC": 0.9, "CTR": 6.81}, {"Data": "2026-06-08", "Investimento": 88.53, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1415, "Cliques": 135, "ROAS": 0.0, "CPA": 0, "CPC": 0.66, "CTR": 9.54}, {"Data": "2026-06-09", "Investimento": 59.96, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 781, "Cliques": 32, "ROAS": 0.0, "CPA": 0, "CPC": 1.87, "CTR": 4.1}, {"Data": "2026-06-10", "Investimento": 57.53, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 690, "Cliques": 33, "ROAS": 0.0, "CPA": 0, "CPC": 1.74, "CTR": 4.78}, {"Data": "2026-06-11", "Investimento": 87.36, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 845, "Cliques": 35, "ROAS": 0.0, "CPA": 0, "CPC": 2.5, "CTR": 4.14}, {"Data": "2026-06-12", "Investimento": 50.23, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 753, "Cliques": 26, "ROAS": 0.0, "CPA": 0, "CPC": 1.93, "CTR": 3.45}, {"Data": "2026-06-13", "Investimento": 90.46000000000001, "Faturamento": 651.58, "Vendas": 1, "Impressoes": 1428, "Cliques": 34, "ROAS": 7.2, "CPA": 90.46, "CPC": 2.66, "CTR": 2.38}, {"Data": "2026-06-14", "Investimento": 141.76, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 1820, "Cliques": 50, "ROAS": 0.0, "CPA": 0, "CPC": 2.84, "CTR": 2.75}, {"Data": "2026-06-15", "Investimento": 120.51, "Faturamento": 176.0, "Vendas": 1, "Impressoes": 1433, "Cliques": 32, "ROAS": 1.46, "CPA": 120.51, "CPC": 3.77, "CTR": 2.23}, {"Data": "2026-06-16", "Investimento": 121.17, "Faturamento": 177.55, "Vendas": 1, "Impressoes": 1826, "Cliques": 82, "ROAS": 1.47, "CPA": 121.17, "CPC": 1.48, "CTR": 4.49}, {"Data": "2026-06-17", "Investimento": 111.29, "Faturamento": 232.23, "Vendas": 1, "Impressoes": 1238, "Cliques": 65, "ROAS": 2.09, "CPA": 111.29, "CPC": 1.71, "CTR": 5.25}, {"Data": "2026-06-18", "Investimento": 37.16, "Faturamento": 0.0, "Vendas": 0, "Impressoes": 281, "Cliques": 15, "ROAS": 0.0, "CPA": 0, "CPC": 2.48, "CTR": 5.34}], "IdadeDiario": [], "PosicionamentoDiario": [], "TopCriativos": [{"Nome": "1 - Pequenos detalhes. Grande impacto. - 15/05", "Faturamento": 8774.3, "Vendas": 19, "ROAS": 3.87}, {"Nome": "4 - \u201cNada \u00f3bvio\u201d. Tudo intencional\u201d.", "Faturamento": 1430.51, "Vendas": 3, "ROAS": 1.82}, {"Nome": "5 - Nuda nasce da ideia de retirar excessos.", "Faturamento": 232.23, "Vendas": 1, "ROAS": 2.42}, {"Nome": "2 - atemporal, moderna e cl\u00e1ssica. - 15/05", "Faturamento": 0.0, "Vendas": 0, "ROAS": 0.0}, {"Nome": "4 - Minimalismo n\u00e3o \u00e9 aus\u00eancia", "Faturamento": 0.0, "Vendas": 0, "ROAS": 0.0}]};
         
         const formatCurrency = (val) => val.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
         const formatNumber = (val) => val.toLocaleString('pt-BR');
@@ -336,6 +326,9 @@
             document.getElementById('kpi-cpa').innerHTML = formatCurrency(dataObj.CPA);
             document.getElementById('kpi-vendas').innerHTML = formatNumber(dataObj.Vendas);
         }
+
+        let ageChartInst = null;
+        let placementChartInst = null;
 
         function updateDashboard() {
             const startVal = document.getElementById('dateStart').value;
@@ -363,6 +356,50 @@
                         totalCli += dayData.Cliques;
                     }
                 });
+            }
+            
+            // Dynamic Charts Update
+            let idadeDataMap = {};
+            let posDataMap = {};
+            
+            if (dashboardData.IdadeDiario) {
+                dashboardData.IdadeDiario.forEach(dayData => {
+                    const dayDate = new Date(dayData.Data + 'T12:00:00');
+                    if (dayDate >= startDate && dayDate <= endDate) {
+                        idadeDataMap[dayData.Idade] = (idadeDataMap[dayData.Idade] || 0) + dayData.Vendas;
+                    }
+                });
+            }
+            
+            if (dashboardData.PosicionamentoDiario) {
+                dashboardData.PosicionamentoDiario.forEach(dayData => {
+                    // Mantém como GLOBAL (ignora o filtro de datas)
+                    posDataMap[dayData.Posicionamento] = (posDataMap[dayData.Posicionamento] || 0) + dayData.Vendas;
+                });
+            }
+            
+            if (ageChartInst) {
+                const labels = Object.keys(idadeDataMap);
+                const data = Object.values(idadeDataMap);
+                ageChartInst.data.labels = labels;
+                ageChartInst.data.datasets[0].data = data;
+                
+                const baseColors = ['rgba(212, 175, 55, 0.8)', 'rgba(183, 110, 121, 0.6)', 'rgba(243, 229, 171, 0.6)', 'rgba(255, 255, 255, 0.4)', 'rgba(212, 175, 55, 0.4)'];
+                const hoverColors = ['rgba(212, 175, 55, 1)', 'rgba(183, 110, 121, 1)', 'rgba(243, 229, 171, 1)', 'rgba(255, 255, 255, 0.8)', 'rgba(212, 175, 55, 0.8)'];
+                ageChartInst.data.datasets[0].backgroundColor = labels.map((_, i) => baseColors[i % baseColors.length]);
+                ageChartInst.data.datasets[0].hoverBackgroundColor = labels.map((_, i) => hoverColors[i % hoverColors.length]);
+                ageChartInst.update();
+            }
+            
+            if (placementChartInst) {
+                const labels = Object.keys(posDataMap);
+                const data = Object.values(posDataMap);
+                placementChartInst.data.labels = labels;
+                placementChartInst.data.datasets[0].data = data;
+                
+                const pieColors = ['#D4AF37', '#B76E79', '#F3E5AB', '#ffffff', '#8a7322', '#6b4047'];
+                placementChartInst.data.datasets[0].backgroundColor = labels.map((_, i) => pieColors[i % pieColors.length]);
+                placementChartInst.update();
             }
             
             const roas = totalInv > 0 ? totalFat / totalInv : 0;
@@ -415,15 +452,15 @@
         Chart.defaults.font.family = "'Outfit', sans-serif";
         
         const ctxAge = document.getElementById('ageChart').getContext('2d');
-        new Chart(ctxAge, {
+        ageChartInst = new Chart(ctxAge, {
             type: 'bar',
             data: {
-                labels: ['45-54 anos', '55-64 anos'],
+                labels: [],
                 datasets: [{
                     label: 'Vendas',
-                    data: [12, 4],
-                    backgroundColor: ['rgba(212, 175, 55, 0.8)', 'rgba(183, 110, 121, 0.6)'],
-                    hoverBackgroundColor: ['rgba(212, 175, 55, 1)', 'rgba(183, 110, 121, 1)'],
+                    data: [],
+                    backgroundColor: [],
+                    hoverBackgroundColor: [],
                     borderRadius: 6,
                     borderWidth: 1,
                     borderColor: 'rgba(255, 255, 255, 0.1)'
@@ -459,13 +496,13 @@
         });
 
         const ctxPlacement = document.getElementById('placementChart').getContext('2d');
-        new Chart(ctxPlacement, {
+        placementChartInst = new Chart(ctxPlacement, {
             type: 'doughnut',
             data: {
-                labels: ['Feed', 'Stories', 'Reels'],
+                labels: [],
                 datasets: [{
-                    data: [11, 6, 2],
-                    backgroundColor: ['#D4AF37', '#B76E79', '#F3E5AB'],
+                    data: [],
+                    backgroundColor: [],
                     borderWidth: 0,
                     hoverOffset: 6
                 }]

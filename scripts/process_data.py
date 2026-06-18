@@ -118,9 +118,61 @@ def process_data():
             'ROAS': round(float(row['ROAS']), 2)
         })
         
+    # Process Idade Daily
+    df_idade = pd.read_excel('data/DIAS E IDADE.xlsx', skiprows=2)
+    idade_cols = df_idade.columns
+    i_ven = [c for c in idade_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
+    col_vendas_idade = i_ven[0] if i_ven else 'Resultados'
+    
+    df_idade = df_idade[df_idade['Idade'].notna()]
+    df_idade = df_idade[~df_idade['Idade'].astype(str).str.contains('All|Total', case=False)]
+    df_idade['Dia_str'] = df_idade['Dia'].astype(str)
+    df_idade = df_idade[df_idade['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
+    
+    df_idade['Dia'] = pd.to_datetime(df_idade['Dia'])
+    df_idade[col_vendas_idade] = pd.to_numeric(df_idade[col_vendas_idade], errors='coerce').fillna(0)
+    
+    idade_agg = df_idade.groupby(['Dia', 'Idade'])[col_vendas_idade].sum().reset_index()
+    idade_diario = []
+    for _, row in idade_agg.iterrows():
+        idade_diario.append({
+            'Data': row['Dia'].strftime('%Y-%m-%d'),
+            'Idade': str(row['Idade']),
+            'Vendas': int(row[col_vendas_idade])
+        })
+
+    # Process Posicionamento Daily
+    try:
+        df_pos = pd.read_excel('data/POSICIONAMENTOS-COM-OS-DIAS.xlsx', skiprows=2)
+        pos_cols = df_pos.columns
+        p_ven = [c for c in pos_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
+        col_vendas_pos = p_ven[0] if p_ven else 'Resultados'
+        
+        df_pos = df_pos[df_pos['Posicionamento'].notna()]
+        df_pos = df_pos[~df_pos['Posicionamento'].astype(str).str.contains('All|Total', case=False)]
+        df_pos['Dia_str'] = df_pos['Dia'].astype(str)
+        df_pos = df_pos[df_pos['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
+        
+        df_pos['Dia'] = pd.to_datetime(df_pos['Dia'])
+        df_pos[col_vendas_pos] = pd.to_numeric(df_pos[col_vendas_pos], errors='coerce').fillna(0)
+        
+        pos_agg = df_pos.groupby(['Dia', 'Posicionamento'])[col_vendas_pos].sum().reset_index()
+        pos_diario = []
+        for _, row in pos_agg.iterrows():
+            pos_diario.append({
+                'Data': row['Dia'].strftime('%Y-%m-%d'),
+                'Posicionamento': str(row['Posicionamento']),
+                'Vendas': int(row[col_vendas_pos])
+            })
+    except Exception as e:
+        print("Erro ao processar Posicionamentos:", e)
+        pos_diario = []
+        
     final_data = {
         'Global': global_metrics,
         'Diario': daily_data,
+        'IdadeDiario': idade_diario,
+        'PosicionamentoDiario': pos_diario,
         'TopCriativos': top_criativos
     }
     
