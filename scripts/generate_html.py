@@ -176,7 +176,7 @@ def generate_html():
         </div>
 
         <!-- Charts Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 fade-in delay-2">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 fade-in delay-2">
             <!-- Age Chart -->
             <div class="glass rounded-2xl p-6 relative overflow-hidden group hover:border-[#D4AF37]/30 transition-colors">
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl group-hover:bg-[#D4AF37]/20 transition-colors duration-500"></div>
@@ -190,9 +190,19 @@ def generate_html():
             <div class="glass rounded-2xl p-6 relative overflow-hidden group hover:border-[#B76E79]/30 transition-colors">
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#B76E79]/10 rounded-full blur-2xl group-hover:bg-[#B76E79]/20 transition-colors duration-500"></div>
                 <h3 class="text-xl font-serif text-[#F3E5AB] mb-1">Posicionamentos</h3>
-                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Visão Global</p>
+                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Período Selecionado</p>
                 <div class="relative h-56">
                     <canvas id="placementChart"></canvas>
+                </div>
+            </div>
+            <!-- Top Regions -->
+            <div class="glass rounded-2xl p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group hover:border-[#D4AF37]/30 transition-colors">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#D4AF37]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <h3 class="text-xl font-serif text-[#F3E5AB] mb-1 w-full text-left">Regiões Campeãs</h3>
+                <p class="text-xs text-white/40 uppercase tracking-widest mb-6 border-b border-white/5 pb-4 w-full text-left">Visão Global</p>
+                <div class="flex-1 flex flex-col justify-center w-full z-10">
+                    <p class="text-5xl md:text-6xl font-serif text-gradient-gold mb-4 group-hover:scale-[1.03] transition-transform duration-500">SP <span class="text-white/20 font-light text-4xl">|</span> RJ <span class="text-white/20 font-light text-4xl">|</span> MG</p>
+                    <p class="text-white/50 text-sm font-light">Estados com maior concentração de demanda do público alvo.</p>
                 </div>
             </div>
         </div>
@@ -355,8 +365,10 @@ def generate_html():
             
             if (dashboardData.PosicionamentoDiario) {
                 dashboardData.PosicionamentoDiario.forEach(dayData => {
-                    // Mantém como GLOBAL (ignora o filtro de datas)
-                    posDataMap[dayData.Posicionamento] = (posDataMap[dayData.Posicionamento] || 0) + dayData.Vendas;
+                    const dayDate = new Date(dayData.Data + 'T12:00:00');
+                    if (dayDate >= startDate && dayDate <= endDate) {
+                        posDataMap[dayData.Posicionamento] = (posDataMap[dayData.Posicionamento] || 0) + dayData.Vendas;
+                    }
                 });
             }
             
