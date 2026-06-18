@@ -378,7 +378,7 @@ def generate_html():
                 return c;
             });
             
-            criativosArray.sort((a, b) => b.Faturamento - a.Faturamento);
+            criativosArray.sort((a, b) => b.Vendas - a.Vendas);
             const top5 = criativosArray.slice(0, 5);
             
             const tbody = document.getElementById('topCreativesBody');
