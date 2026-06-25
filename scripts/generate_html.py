@@ -250,7 +250,7 @@ def generate_html():
                     <h4 class="text-xl font-serif text-emerald-400">O que funcionou</h4>
                 </div>
                 <p class="text-white/60 leading-relaxed text-sm font-light">
-                    O criativo <span class="text-white font-medium">"Pequenos detalhes. Grande impacto."</span> foi o grande campeão absoluto, sendo responsável por mais de 80% do faturamento (ROAS 3.87). As semanas 21 e 22 tiveram picos excelentes com CTRs de ~10% e ROAS > 4. O público de 45-54 anos converteu muito bem (12 vendas) no Feed (11 vendas), validando a aderência do Sudeste (SP/RJ/MG).
+                    O criativo <span class="text-white font-medium">"2 - atemporal, moderna e clássica"</span> foi o grande destaque do período, sendo responsável por 75% das vendas (3 conversões) e gerando um <strong class="text-emerald-400">ROAS excepcional de 17.3x</strong>. O apelo visual/texto conectou perfeitamente com o público-alvo, provando que essa linha de comunicação é a vencedora absoluta deste teste.
                 </p>
             </div>
             
@@ -262,7 +262,7 @@ def generate_html():
                     <h4 class="text-xl font-serif text-rose-400">Onde está o gargalo</h4>
                 </div>
                 <p class="text-white/60 leading-relaxed text-sm font-light">
-                    Há dependência de um único criativo. Houve queda brusca de performance a partir da Semana 23, atingindo o fundo na Semana 24 (CPA acima de R$ 570 e ROAS 1.13), indicando fadiga do criativo campeão ou saturação do público. Além disso, Reels e o público mais maduro (55-64 anos) trouxeram retornos mais baixos.
+                    A campanha dependeu quase que 100% de um único anúncio. Os outros +10 criativos testados apenas consumiram verba sem trazer retorno expressivo. Por exemplo, o criativo <span class="text-white font-medium">"1 - Pequenos detalhes..."</span> até gerou 1 venda, mas teve um ROAS de apenas 0.6x (prejuízo). Os demais rodaram, gastaram e não converteram.
                 </p>
             </div>
 
@@ -274,9 +274,9 @@ def generate_html():
                     <h4 class="text-xl font-serif text-amber-400">Próximas ações</h4>
                 </div>
                 <div class="text-white/60 leading-relaxed text-sm font-light space-y-3">
-                    <p><span class="text-[#D4AF37] font-medium mr-1">1. Renovação:</span> Produzir novas variações visuais baseadas no criativo "Pequenos detalhes" para combater a fadiga recente.</p>
-                    <p><span class="text-[#D4AF37] font-medium mr-1">2. Foco de Orçamento:</span> Direcionar mais verba ao Feed para mulheres de 45-54 anos do eixo SP/RJ/MG.</p>
-                    <p><span class="text-[#D4AF37] font-medium mr-1">3. Otimização:</span> Pausar criativos secundários ineficazes e testar novos ângulos nos Stories.</p>
+                    <p><span class="text-[#D4AF37] font-medium mr-1">1. Pausar os Sanguessugas:</span> Desativar imediatamente o criativo "1" (ROAS negativo) e os demais que gastaram o CPA ideal e não trouxeram vendas.</p>
+                    <p><span class="text-[#D4AF37] font-medium mr-1">2. Escalar o Vencedor:</span> Direcionar o orçamento livre para o criativo "2 - atemporal", aproveitando seu momento de tração e ROAS altíssimo.</p>
+                    <p><span class="text-[#D4AF37] font-medium mr-1">3. Novas Variações:</span> Como a comunicação "Atemporal/Clássica" validou bem, a próxima leva deve focar em variações desse anúncio.</p>
                 </div>
             </div>
         </div>

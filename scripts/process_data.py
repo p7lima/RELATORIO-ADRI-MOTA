@@ -1,37 +1,53 @@
 import pandas as pd
 import json
 import numpy as np
+import traceback
+
+def safe_col(cols, keywords, default):
+    found = [c for c in cols if any(kw.lower() in str(c).lower() for kw in keywords)]
+    return found[0] if found else default
+
+def filter_campaign(df):
+    for c in df.columns:
+        if 'campanha' in str(c).lower() or 'conjunto' in str(c).lower():
+            df = df[~df[c].astype(str).str.contains('2.0', case=False, na=False)]
+    return df
 
 def process_data():
     # Read Dia a Dia
     df_dia = pd.read_excel('data/DADOS-DIA-A-DIA.xlsx', skiprows=2)
+    df_dia = filter_campaign(df_dia)
     
-    # Filter rows with actual dates
     df_dia['Dia_str'] = df_dia['Dia'].astype(str)
     df_dia_dates = df_dia[df_dia['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
     df_dia_dates['Dia'] = pd.to_datetime(df_dia_dates['Dia'])
     
-    # Identify relevant columns
     cols = df_dia_dates.columns
-    col_investimento = [c for c in cols if 'Valor usado' in str(c)][0]
-    col_faturamento = [c for c in cols if 'Valor dos resultados' in str(c)][0]
+    col_investimento = safe_col(cols, ['Valor usado'], 'Investimento')
+    col_faturamento = safe_col(cols, ['Valor dos resultados', 'Valor de convers'], 'Faturamento')
     
-    # Find exact 'Resultados' column for Sales
     vendas_cols = [c for c in cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
     col_vendas = vendas_cols[0] if vendas_cols else 'Resultados'
     
-    col_impressoes = [c for c in cols if 'Impress' in str(c)][0]
-    col_cliques = [c for c in cols if 'Cliques' in str(c)][0]
+    col_impressoes = safe_col(cols, ['Impress'], 'Impressoes')
+    col_cliques = safe_col(cols, ['Cliques'], 'Cliques')
     
+    df_dia_all = df_dia[df_dia['Dia'].astype(str).str.contains('All|Total', case=False, na=False)].copy()
+    if df_dia_all.empty:
+        df_dia_all = df_dia_dates
+        
     for c in [col_investimento, col_faturamento, col_vendas, col_impressoes, col_cliques]:
+        if c not in df_dia_all.columns: df_dia_all[c] = 0
+        df_dia_all[c] = pd.to_numeric(df_dia_all[c], errors='coerce').fillna(0)
+        if c not in df_dia_dates.columns: df_dia_dates[c] = 0
         df_dia_dates[c] = pd.to_numeric(df_dia_dates[c], errors='coerce').fillna(0)
         
     global_metrics = {
-        'Investimento': float(df_dia_dates[col_investimento].sum()),
-        'Faturamento': float(df_dia_dates[col_faturamento].sum()),
-        'Vendas': int(df_dia_dates[col_vendas].sum()),
-        'Impressoes': int(df_dia_dates[col_impressoes].sum()),
-        'Cliques': int(df_dia_dates[col_cliques].sum()),
+        'Investimento': float(df_dia_all[col_investimento].sum()),
+        'Faturamento': float(df_dia_all[col_faturamento].sum()),
+        'Vendas': int(df_dia_all[col_vendas].sum()),
+        'Impressoes': int(df_dia_all[col_impressoes].sum()),
+        'Cliques': int(df_dia_all[col_cliques].sum()),
     }
     
     if global_metrics['Investimento'] > 0:
@@ -48,7 +64,6 @@ def process_data():
     else:
         global_metrics['CTR'] = 0
         
-    # Group by Day
     daily_data = []
     for date_val, group in df_dia_dates.groupby(df_dia_dates['Dia'].dt.date):
         inv = float(group[col_investimento].sum())
@@ -57,15 +72,13 @@ def process_data():
         imp = int(group[col_impressoes].sum())
         cli = int(group[col_cliques].sum())
         
-        # Calculate daily proportions (if needed by frontend, though frontend will usually recalculate for sum)
         roas = round(fat / inv, 2) if inv > 0 else 0
         cpa = round(inv / ven, 2) if ven > 0 else 0
         cpc = round(inv / cli, 2) if cli > 0 else 0
         ctr = round((cli / imp) * 100, 2) if imp > 0 else 0
         
-        date_str = date_val.strftime('%Y-%m-%d')
         daily_data.append({
-            'Data': date_str,
+            'Data': date_val.strftime('%Y-%m-%d'),
             'Investimento': inv,
             'Faturamento': fat,
             'Vendas': ven,
@@ -77,129 +90,40 @@ def process_data():
             'CTR': ctr
         })
 
-    df_cri = pd.read_excel('data/CRIATIVO.xlsx')
-    c_cols = df_cri.columns
-    c_nome = [c for c in c_cols if 'ncios' in str(c) and 'conjunto' not in str(c)]
-    if not c_nome:
-        # Fallback if specific chars are parsed differently
-        c_nome = [c for c in c_cols if 'ncios' in str(c)]
-    c_nome = c_nome[0] if c_nome else c_cols[1] # fallback to second col usually
-        
-    c_fat = [c for c in c_cols if 'Valor dos resultados' in str(c)][0]
-    
-    vendas_cols_cri = [c for c in c_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
-    c_ven = vendas_cols_cri[0] if vendas_cols_cri else 'Resultados'
-    
-    c_inv = [c for c in c_cols if 'Valor usado' in str(c)][0]
-    
-    for c in [c_fat, c_ven, c_inv]:
-         df_cri[c] = pd.to_numeric(df_cri[c], errors='coerce').fillna(0)
-         
-    # Filter valid creatives and group by name
-    df_cri = df_cri[df_cri[c_nome].notna()]
-    df_cri = df_cri[~df_cri[c_nome].astype(str).str.contains('All|Total', case=False)]
-    
-    cri_agg = df_cri.groupby(c_nome).agg({
-        c_fat: 'sum',
-        c_ven: 'sum',
-        c_inv: 'sum'
-    }).reset_index()
-    
-    cri_agg['ROAS'] = np.where(cri_agg[c_inv] > 0, cri_agg[c_fat] / cri_agg[c_inv], 0)
-    
-    top_5 = cri_agg.sort_values(by=c_fat, ascending=False).head(5)
-    
-    top_criativos = []
-    for _, row in top_5.iterrows():
-        top_criativos.append({
-            'Nome': str(row[c_nome]),
-            'Faturamento': float(row[c_fat]),
-            'Vendas': int(row[c_ven]),
-            'ROAS': round(float(row['ROAS']), 2)
-        })
-        
-    # Process Idade Daily
-    df_idade = pd.read_excel('data/DIAS E IDADE.xlsx', skiprows=2)
-    idade_cols = df_idade.columns
-    i_ven = [c for c in idade_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
-    col_vendas_idade = i_ven[0] if i_ven else 'Resultados'
-    
-    # Preencher hierarquia do Meta (ffill)
-    df_idade['Idade'] = df_idade['Idade'].ffill()
-    
-    df_idade = df_idade[df_idade['Idade'].notna()]
-    df_idade = df_idade[~df_idade['Idade'].astype(str).str.contains('All|Total', case=False)]
-    df_idade['Dia_str'] = df_idade['Dia'].astype(str)
-    df_idade = df_idade[df_idade['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
-    
-    df_idade['Dia'] = pd.to_datetime(df_idade['Dia'])
-    df_idade[col_vendas_idade] = pd.to_numeric(df_idade[col_vendas_idade], errors='coerce').fillna(0)
-    
-    idade_agg = df_idade.groupby(['Dia', 'Idade'])[col_vendas_idade].sum().reset_index()
-    idade_diario = []
-    for _, row in idade_agg.iterrows():
-        idade_diario.append({
-            'Data': row['Dia'].strftime('%Y-%m-%d'),
-            'Idade': str(row['Idade']),
-            'Vendas': int(row[col_vendas_idade])
-        })
-
-    # Process Posicionamento Daily
+    # Criativos Diário e Top 5
     try:
-        df_pos = pd.read_excel('data/POSICIONAMENTOS-COM-OS-DIAS.xlsx', skiprows=2)
-        pos_cols = df_pos.columns
-        p_ven = [c for c in pos_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
-        col_vendas_pos = p_ven[0] if p_ven else 'Resultados'
+        try:
+            df_criativo_diario = pd.read_excel('data/CRIATIVO-DIAADIA.xlsx')
+            if 'Dia' not in df_criativo_diario.columns and 'Nome da campanha' not in df_criativo_diario.columns:
+                df_criativo_diario = pd.read_excel('data/CRIATIVO-DIAADIA.xlsx', skiprows=2)
+        except:
+            df_criativo_diario = pd.read_excel('data/CRIATIVO-DIAADIA.xlsx', skiprows=2)
+            
+        df_criativo_diario = filter_campaign(df_criativo_diario)
         
-        # Preencher hierarquia do Meta (ffill)
-        df_pos['Dia'] = df_pos['Dia'].ffill()
-        
-        df_pos = df_pos[df_pos['Posicionamento'].notna()]
-        df_pos = df_pos[~df_pos['Posicionamento'].astype(str).str.contains('All|Total', case=False)]
-        df_pos['Dia_str'] = df_pos['Dia'].astype(str)
-        df_pos = df_pos[df_pos['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
-        
-        df_pos['Dia'] = pd.to_datetime(df_pos['Dia'])
-        df_pos[col_vendas_pos] = pd.to_numeric(df_pos[col_vendas_pos], errors='coerce').fillna(0)
-        
-        pos_agg = df_pos.groupby(['Dia', 'Posicionamento'])[col_vendas_pos].sum().reset_index()
-        pos_diario = []
-        for _, row in pos_agg.iterrows():
-            pos_diario.append({
-                'Data': row['Dia'].strftime('%Y-%m-%d'),
-                'Posicionamento': str(row['Posicionamento']),
-                'Vendas': int(row[col_vendas_pos])
-            })
-    except Exception as e:
-        print("Erro ao processar Posicionamentos:", e)
-        pos_diario = []
-        
-    # Process Criativo Daily
-    try:
-        df_criativo_diario = pd.read_excel('data/CRIATIVO-DIAADIA.xlsx')
         criativo_diario_cols = df_criativo_diario.columns
-        
-        col_cria = [c for c in criativo_diario_cols if 'Anúncio' in str(c) or 'Anuncio' in str(c) or 'Anncio' in str(c)]
-        col_cria_name = col_cria[0] if col_cria else 'Anúncios'
-        
-        c_inv = [c for c in criativo_diario_cols if 'Valor usado' in str(c)]
-        col_c_inv = c_inv[0] if c_inv else 'Valor usado (BRL)'
-        
-        c_fat = [c for c in criativo_diario_cols if 'Valor dos resultados' in str(c)]
-        col_c_fat = c_fat[0] if c_fat else 'Valor dos resultados'
+        col_cria_name = [c for c in criativo_diario_cols if 'ncios' in str(c).lower() and 'conjunto' not in str(c).lower()]
+        col_cria_name = col_cria_name[0] if col_cria_name else 'Anúncios'
+        col_c_inv = safe_col(criativo_diario_cols, ['Valor usado'], 'Valor usado (BRL)')
+        col_c_fat = safe_col(criativo_diario_cols, ['Valor dos resultados', 'Valor de convers'], 'Valor dos resultados')
         
         c_ven = [c for c in criativo_diario_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
         col_c_ven = c_ven[0] if c_ven else 'Resultados'
         
+        if col_c_fat not in df_criativo_diario.columns: df_criativo_diario[col_c_fat] = 0
+        if col_c_inv not in df_criativo_diario.columns: df_criativo_diario[col_c_inv] = 0
+        if col_c_ven not in df_criativo_diario.columns: df_criativo_diario[col_c_ven] = 0
+        if col_cria_name not in df_criativo_diario.columns: df_criativo_diario[col_cria_name] = 'Desconhecido'
+        
         df_criativo_diario = df_criativo_diario[~df_criativo_diario[col_cria_name].astype(str).str.contains('All|Total', case=False)]
+        
         df_criativo_diario['Dia_str'] = df_criativo_diario['Dia'].astype(str)
         df_criativo_diario = df_criativo_diario[df_criativo_diario['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
-        
         df_criativo_diario['Dia'] = pd.to_datetime(df_criativo_diario['Dia'])
-        df_criativo_diario[col_c_inv] = pd.to_numeric(df_criativo_diario[col_c_inv], errors='coerce').fillna(0)
-        df_criativo_diario[col_c_fat] = pd.to_numeric(df_criativo_diario[col_c_fat], errors='coerce').fillna(0)
-        df_criativo_diario[col_c_ven] = pd.to_numeric(df_criativo_diario[col_c_ven], errors='coerce').fillna(0)
         
+        for c in [col_c_inv, col_c_fat, col_c_ven]:
+            df_criativo_diario[c] = pd.to_numeric(df_criativo_diario[c], errors='coerce').fillna(0)
+            
         cria_agg = df_criativo_diario.groupby(['Dia', col_cria_name])[[col_c_inv, col_c_fat, col_c_ven]].sum().reset_index()
         criativos_diario = []
         for _, row in cria_agg.iterrows():
@@ -210,9 +134,95 @@ def process_data():
                 'Faturamento': float(row[col_c_fat]),
                 'Vendas': int(row[col_c_ven])
             })
+            
+        cri_total = df_criativo_diario.groupby(col_cria_name).agg({
+            col_c_fat: 'sum',
+            col_c_ven: 'sum',
+            col_c_inv: 'sum'
+        }).reset_index()
+        
+        cri_total['ROAS'] = np.where(cri_total[col_c_inv] > 0, cri_total[col_c_fat] / cri_total[col_c_inv], 0)
+        if cri_total[col_c_fat].sum() > 0:
+            top_5 = cri_total.sort_values(by=col_c_fat, ascending=False).head(5)
+        else:
+            top_5 = cri_total.sort_values(by=col_c_ven, ascending=False).head(5)
+            
+        top_criativos = []
+        for _, row in top_5.iterrows():
+            top_criativos.append({
+                'Nome': str(row[col_cria_name]),
+                'Faturamento': float(row[col_c_fat]),
+                'Vendas': int(row[col_c_ven]),
+                'ROAS': round(float(row['ROAS']), 2)
+            })
     except Exception as e:
-        print("Erro ao processar Criativos Diario:", e)
+        print("Erro ao processar Criativos Diario:", traceback.format_exc())
         criativos_diario = []
+        top_criativos = []
+
+    # Idade
+    try:
+        df_idade = pd.read_excel('data/DIAS E IDADE.xlsx', skiprows=2)
+        df_idade = filter_campaign(df_idade)
+        idade_cols = df_idade.columns
+        i_ven = [c for c in idade_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
+        col_vendas_idade = i_ven[0] if i_ven else 'Resultados'
+        
+        if 'Idade' in df_idade.columns:
+            df_idade['Idade'] = df_idade['Idade'].ffill()
+            df_idade = df_idade[df_idade['Idade'].notna()]
+            df_idade = df_idade[~df_idade['Idade'].astype(str).str.contains('All|Total', case=False)]
+            df_idade['Dia_str'] = df_idade['Dia'].astype(str)
+            df_idade = df_idade[df_idade['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
+            df_idade['Dia'] = pd.to_datetime(df_idade['Dia'])
+            if col_vendas_idade not in df_idade.columns: df_idade[col_vendas_idade] = 0
+            df_idade[col_vendas_idade] = pd.to_numeric(df_idade[col_vendas_idade], errors='coerce').fillna(0)
+            
+            idade_agg = df_idade.groupby(['Dia', 'Idade'])[col_vendas_idade].sum().reset_index()
+            idade_diario = []
+            for _, row in idade_agg.iterrows():
+                idade_diario.append({
+                    'Data': row['Dia'].strftime('%Y-%m-%d'),
+                    'Idade': str(row['Idade']),
+                    'Vendas': int(row[col_vendas_idade])
+                })
+        else:
+            idade_diario = []
+    except Exception as e:
+        print("Erro ao processar Idade:", traceback.format_exc())
+        idade_diario = []
+
+    # Posicionamento
+    try:
+        df_pos = pd.read_excel('data/POSICIONAMENTOS-COM-OS-DIAS.xlsx', skiprows=2)
+        df_pos = filter_campaign(df_pos)
+        pos_cols = df_pos.columns
+        p_ven = [c for c in pos_cols if 'Resultados' in str(c) and 'Tipo' not in str(c) and 'ROAS' not in str(c) and 'Custo' not in str(c) and c != 'Resultados (iniciais)']
+        col_vendas_pos = p_ven[0] if p_ven else 'Resultados'
+        
+        if 'Posicionamento' in df_pos.columns:
+            df_pos['Dia'] = df_pos['Dia'].ffill()
+            df_pos = df_pos[df_pos['Posicionamento'].notna()]
+            df_pos = df_pos[~df_pos['Posicionamento'].astype(str).str.contains('All|Total', case=False)]
+            df_pos['Dia_str'] = df_pos['Dia'].astype(str)
+            df_pos = df_pos[df_pos['Dia_str'].str.match(r'\d{4}-\d{2}-\d{2}', na=False)].copy()
+            df_pos['Dia'] = pd.to_datetime(df_pos['Dia'])
+            if col_vendas_pos not in df_pos.columns: df_pos[col_vendas_pos] = 0
+            df_pos[col_vendas_pos] = pd.to_numeric(df_pos[col_vendas_pos], errors='coerce').fillna(0)
+            
+            pos_agg = df_pos.groupby(['Dia', 'Posicionamento'])[col_vendas_pos].sum().reset_index()
+            pos_diario = []
+            for _, row in pos_agg.iterrows():
+                pos_diario.append({
+                    'Data': row['Dia'].strftime('%Y-%m-%d'),
+                    'Posicionamento': str(row['Posicionamento']),
+                    'Vendas': int(row[col_vendas_pos])
+                })
+        else:
+            pos_diario = []
+    except Exception as e:
+        print("Erro ao processar Posicionamentos:", traceback.format_exc())
+        pos_diario = []
         
     final_data = {
         'Global': global_metrics,
